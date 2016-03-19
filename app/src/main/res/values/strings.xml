@@ -2,4 +2,20 @@
     <string name="app_name">CalorieCarbCounter</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+
+    <!-- General Strings-->
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="calories">Calories</string>
+    <string name="carbs">Carbs</string>
+    <string name="pounds">Pounds</string>
+    <string name="pounds_unit">lbs</string>
+    <string name="grams_unit">g</string>
+
+
+    <!-- Add food dialog strings-->
+    <string name="add_food_title">Add Food</string>
+    <string name="add_food_message">Enter food information</string>
+    <string name="add_food_description">Food description</string>
+
 </resources>

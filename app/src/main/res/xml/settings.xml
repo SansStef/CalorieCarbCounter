@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory
-        android:summary="Height, weight, and age information"
-        android:title="General" >
+        android:title="@string/general" >
         <EditTextPreference
             android:key="height"
-            android:summary="Please enter your height in feet and inches"
-            android:title="Height" />
+            android:title="@string/height" />
         <EditTextPreference
             android:key="startweight"
-            android:summary="Enter your starting weight in pounds"
-            android:title="Starting Weight" />
+            android:title="@string/starting_weight" />
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:summary="Calorie, carb, weight goals"
-        android:title="Goals" >
+        android:title="@string/goals" >
         <EditTextPreference
             android:key="goalweight"
-            android:summary="Enter your goal weight in pounds"
-            android:title="Goal Weight" />
+            android:title="@string/goal_weight" />
 
     </PreferenceCategory>
 </PreferenceScreen>

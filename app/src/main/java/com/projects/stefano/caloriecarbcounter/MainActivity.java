@@ -2,20 +2,24 @@ package com.projects.stefano.caloriecarbcounter;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,22 +45,77 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = MainActivity.this.getLayoutInflater();
         View dialog = inflater.inflate(R.layout.add_food, null);
 
-        builder.setView(dialog)
-                .setTitle(R.string.add_food_title);
+        builder.setView(dialog);
+
+        TextView title = new TextView(this);
+        // You Can Customise your Title here
+        title.setText(R.string.add_food_title);
+        title.setBackgroundColor(Color.DKGRAY);
+        title.setPadding(10, 10, 10, 10);
+        title.setGravity(Gravity.CENTER);
+        title.setTextColor(Color.WHITE);
+        title.setTextSize(20);
+
+        builder.setCustomTitle(title);
 
         //Add food views
         final EditText editText_Food = (EditText) dialog.findViewById(R.id.editText_food);
-        final TimePicker timePicker_Food = (TimePicker) dialog.findViewById(R.id.timePicker_food);
+        final EditText calorieCount = (EditText) dialog.findViewById(R.id.editText_calorieCount);
+        final EditText carbCount = (EditText) dialog.findViewById(R.id.editText_carbCount);
 
         // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Food dialog variables
-                String m_Text = editText_Food.getText().toString();
+                String food = editText_Food.getText().toString();
+                String calories = calorieCount.getText().toString();
+                String carbs = carbCount.getText().toString();
+
+                // Get the TableLayout
+                TableLayout foodTable = (TableLayout) findViewById(R.id.food_table);
+
+                // Create a TableRow
+                TableRow row = new TableRow(MainActivity.this);
+                row.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+
+                // Create a TextView for food description
+                TextView labelFood = new TextView(MainActivity.this);
+                labelFood.setText(food);
+                labelFood.setTextColor(Color.BLACK);
+                labelFood.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+                row.addView(labelFood);
+
+                // Create a TextView for calories
+                TextView labelCalories = new TextView(MainActivity.this);
+                labelCalories.setText(calories);
+                labelCalories.setTextColor(Color.BLACK);
+                labelCalories.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+                row.addView(labelCalories);
+
+                // Create a TextView for carbs
+                TextView labelCarbs = new TextView(MainActivity.this);
+                labelCarbs.setText(carbs);
+                labelCarbs.setTextColor(Color.BLACK);
+                labelCarbs.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+                row.addView(labelCarbs);
+
+                // Add the TableRow to the TableLayout
+                foodTable.addView(row, new TableLayout.LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+
             }
         });
-        builder.setNegativeButton("Cancel", null);
+        builder.setNegativeButton(R.string.cancel, null);
 
         builder.show();
     }

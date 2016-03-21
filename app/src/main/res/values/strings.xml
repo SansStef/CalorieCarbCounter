@@ -7,10 +7,21 @@
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="calories">Calories</string>
+    <string name="kCal" translatable="false">kCal</string>
     <string name="carbs">Carbs</string>
     <string name="pounds">Pounds</string>
-    <string name="pounds_unit">lbs</string>
-    <string name="grams_unit">g</string>
+    <string name="pounds_unit" translatable="false">lbs</string>
+    <string name="grams_unit" translatable="false">g</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="food">Food</string>
+
+    <!-- Settings screen strings -->
+    <string name="goal_weight">Goal Weight</string>
+    <string name="general">General</string>
+    <string name="height">Height</string>
+    <string name="starting_weight">Starting weight</string>
+    <string name="goals">Goals</string>
 
 
     <!-- Add food dialog strings-->

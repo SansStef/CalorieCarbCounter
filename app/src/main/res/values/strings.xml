@@ -16,6 +16,9 @@
     <string name="cancel">Cancel</string>
     <string name="food">Food</string>
     <string name="avg">Avg</string>
+    <string name="total">Total</string>
+    <string name="left">left</string>
+    <string name="remaining">Remaining</string>
 
     <!-- Settings screen strings -->
     <string name="goal_weight">Goal Weight</string>

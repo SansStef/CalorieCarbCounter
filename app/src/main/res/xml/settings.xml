@@ -15,6 +15,14 @@
         <EditTextPreference
             android:key="goalweight"
             android:title="@string/goal_weight" />
+        <EditTextPreference
+            android:key="goalCalories"
+            android:inputType="number"
+            android:title="Daily Calorie Goal" />
+        <EditTextPreference
+            android:key="goalCarbs"
+            android:inputType="number"
+            android:title="Daily Carb Goal" />
 
     </PreferenceCategory>
 </PreferenceScreen>

@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -77,47 +76,76 @@ public class MainActivity extends AppCompatActivity {
 
                 // Create a TableRow
                 TableRow row = new TableRow(MainActivity.this);
-                row.setLayoutParams(new LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT));
+                row.setLayoutParams(new TableLayout.LayoutParams(
+                        TableLayout.LayoutParams.MATCH_PARENT,
+                        TableLayout.LayoutParams.WRAP_CONTENT));
 
                 // Create a TextView for food description
                 TextView labelFood = new TextView(MainActivity.this);
                 labelFood.setText(food);
                 labelFood.setTextColor(Color.BLACK);
-                labelFood.setLayoutParams(new LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT));
+                labelFood.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT));
                 row.addView(labelFood);
 
                 // Create a TextView for calories
                 TextView labelCalories = new TextView(MainActivity.this);
                 labelCalories.setText(calories);
                 labelCalories.setTextColor(Color.BLACK);
-                labelCalories.setLayoutParams(new LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT));
+                labelCalories.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT));
                 row.addView(labelCalories);
 
                 // Create a TextView for carbs
                 TextView labelCarbs = new TextView(MainActivity.this);
                 labelCarbs.setText(carbs);
                 labelCarbs.setTextColor(Color.BLACK);
-                labelCarbs.setLayoutParams(new LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT));
+                labelCarbs.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT));
                 row.addView(labelCarbs);
 
                 // Add the TableRow to the TableLayout
                 foodTable.addView(row, new TableLayout.LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT));
+                        TableLayout.LayoutParams.MATCH_PARENT,
+                        TableLayout.LayoutParams.WRAP_CONTENT));
+
+                MainActivity.this.addToTotals(Integer.parseInt(calories), Integer.parseInt(carbs));
+                MainActivity.this.subtractFromRemaining(Integer.parseInt(calories), Integer.parseInt(carbs));
 
             }
         });
         builder.setNegativeButton(R.string.cancel, null);
 
         builder.show();
+    }
+
+    private void addToTotals(int calories, int carbs){
+        TextView calorieTotal = (TextView) findViewById(R.id.caloriesTotal);
+        int totCal = Integer.parseInt(calorieTotal.getText().toString());
+        calorieTotal.setText(Integer.toString(totCal + calories));
+
+        TextView carbTotal = (TextView) findViewById(R.id.carbsTotal);
+        int totCarb = Integer.parseInt(carbTotal.getText().toString());
+        carbTotal.setText(Integer.toString(totCarb + carbs));
+    }
+
+    private void subtractFromRemaining(int calories, int carbs){
+        TextView calorieLeft = (TextView) findViewById(R.id.caloriesLeft);
+        int remCal = Integer.parseInt(calorieLeft.getText().toString());
+        calorieLeft.setText(Integer.toString(remCal - calories));
+        if (remCal - calories < 0){
+            calorieLeft.setTextColor(Color.RED);
+        }
+
+        TextView carbLeft = (TextView) findViewById(R.id.carbsLeft);
+        int remCarb = Integer.parseInt(carbLeft.getText().toString());
+        carbLeft.setText(Integer.toString(remCarb - carbs));
+        if (remCarb - carbs < 0){
+            carbLeft.setTextColor(Color.RED);
+        }
     }
 
     @Override

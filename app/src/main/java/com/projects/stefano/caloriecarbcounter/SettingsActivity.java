@@ -1,5 +1,6 @@
 package com.projects.stefano.caloriecarbcounter;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -8,7 +9,7 @@ import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -44,6 +45,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.onCreate(savedInstanceState);
         setupActionBar();
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment

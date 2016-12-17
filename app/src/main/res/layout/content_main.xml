@@ -91,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="1200"
+        android:text="2000"
         android:id="@+id/caloriesLeft"
         android:textColor="#00ff00" />
     <TextView
@@ -104,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="15"
+        android:text="50"
         android:id="@+id/carbsLeft"
         android:textColor="#FF00FF00" />
 

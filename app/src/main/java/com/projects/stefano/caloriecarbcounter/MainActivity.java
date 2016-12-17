@@ -35,7 +35,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public Realm realm;
 
@@ -47,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        TextView calorieLeft = (TextView) findViewById(R.id.caloriesLeft);
+        calorieLeft.setText(prefs.getString("goalCalories","0"));
+        TextView carbLeft = (TextView) findViewById(R.id.carbsLeft);
+        carbLeft.setText(prefs.getString("goalCarbs","0"));
 
         // Create a RealmConfiguration which is to locate Realm file in package's "files" directory.
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(MainActivity.this).build();
@@ -119,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
                 TableLayout.LayoutParams.WRAP_CONTENT));
 
         MainActivity.this.addToTotals(food.getCalories(), food.getCarbs());
-        MainActivity.this.subtractFromRemaining(food.getCalories(), food.getCarbs());
+        MainActivity.this.updateRemaining();
+//        MainActivity.this.subtractFromRemaining(food.getCalories(), food.getCarbs());
     }
 
     protected void showFoodDialog(){
@@ -154,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
                 //Food dialog variables
                 food.setName(editText_Food.getText().toString());
-                food.setCalories(Integer.parseInt(calorieCount.getText().toString()));
-                food.setCarbs(Integer.parseInt(carbCount.getText().toString()));
+                food.setCalories("".equals(calorieCount.getText().toString()) ? 0 : Integer.parseInt(calorieCount.getText().toString()));
+                food.setCarbs("".equals(carbCount.getText().toString()) ? 0 : Integer.parseInt(carbCount.getText().toString()));
                 food.setEntryDate(new Date());
 
                 // Persist food data
@@ -181,11 +187,35 @@ public class MainActivity extends AppCompatActivity {
         carbTotal.setText(Integer.toString(totCarb + carbs));
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (totCal > Integer.parseInt(prefs.getString("goalCalories", "2000"))){
+        if (totCal > Integer.parseInt(prefs.getString("goalCalories", "0"))){
             calorieTotal.setTextColor(Color.RED);
         }
-        if (totCarb + carbs > Integer.parseInt(prefs.getString("goalCarbs", "30"))){
+        if (totCarb + carbs > Integer.parseInt(prefs.getString("goalCarbs", "0"))){
             carbTotal.setTextColor(Color.RED);
+        }
+    }
+
+    private void updateRemaining(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        int goalCal = Integer.parseInt(prefs.getString("goalCalories", "0"));
+        int goalCarb = Integer.parseInt(prefs.getString("goalCarbs", "0"));
+
+        TextView calorieTotal = (TextView) findViewById(R.id.caloriesTotal);
+        TextView carbTotal = (TextView) findViewById(R.id.carbsTotal);
+        int totCal = Integer.parseInt(calorieTotal.getText().toString());
+        int totCarb = Integer.parseInt(carbTotal.getText().toString());
+
+        TextView calorieLeft = (TextView) findViewById(R.id.caloriesLeft);
+        calorieLeft.setText(Integer.toString(goalCal - totCal));
+        if (goalCal - totCal < 0){
+            calorieLeft.setTextColor(Color.RED);
+        }
+
+        TextView carbLeft = (TextView) findViewById(R.id.carbsLeft);
+        carbLeft.setText(Integer.toString(goalCarb - totCarb));
+        if (goalCarb - totCarb < 0){
+            carbLeft.setTextColor(Color.RED);
         }
     }
 
@@ -226,5 +256,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if("goalCalories".equals(key) || "goalCarbs".equals(key)){
+            updateRemaining();
+        }
     }
 }

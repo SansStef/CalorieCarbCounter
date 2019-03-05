@@ -6,38 +6,32 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.projects.stefano.caloriecarbcounter.model.FoodDatabase;
 import com.projects.stefano.caloriecarbcounter.model.FoodEntry;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
+import androidx.room.Room;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public Realm realm;
+    public FoodDatabase foodDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        PreferenceManager.setDefaultValues(MainActivity.this, R.xml.settings, false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         TextView calorieLeft = (TextView) findViewById(R.id.caloriesLeft);
@@ -54,12 +48,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         carbLeft.setText(prefs.getString("goalCarbs","0"));
 
         // Create a RealmConfiguration which is to locate Realm file in package's "files" directory.
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(MainActivity.this).build();
-        realm = Realm.getInstance(realmConfig);
+        foodDatabase = Room.databaseBuilder(MainActivity.this, FoodDatabase.class, "FoodDatabase")
+               .allowMainThreadQueries()
+               .build();
 
-        RealmResults<FoodEntry> foods = realm.where(FoodEntry.class).findAll();
+        Calendar today = new GregorianCalendar();
+        today.setTime( new Date() );
+
+        Calendar foodDay = new GregorianCalendar();
+
+        FoodEntry[] foods = foodDatabase.foodDao().loadTodaysFood();
         for (FoodEntry food : foods){
-            if(new LocalDate(food.getEntryDate()).equals(new LocalDate())){
+            foodDay.setTime( food.entryDate );
+            if(today.get(Calendar.YEAR) == foodDay.get(Calendar.YEAR) &&
+                    today.get(Calendar.DAY_OF_YEAR) == foodDay.get(Calendar.DAY_OF_YEAR)) {
                 addFoodRow(food);
             }
         }
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         // Create a TextView for food description
         TextView labelFood = new TextView(MainActivity.this);
-        labelFood.setText(food.getName());
+        labelFood.setText(food.name);
         labelFood.setTextColor(Color.BLACK);
         labelFood.setLayoutParams(new TableRow.LayoutParams(
                 TableRow.LayoutParams.MATCH_PARENT,
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         // Create a TextView for calories
         TextView labelCalories = new TextView(MainActivity.this);
-        labelCalories.setText(""+food.getCalories());
+        labelCalories.setText(""+food.calories);
         labelCalories.setTextColor(Color.BLACK);
         labelCalories.setLayoutParams(new TableRow.LayoutParams(
                 TableRow.LayoutParams.MATCH_PARENT,
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         // Create a TextView for carbs
         TextView labelCarbs = new TextView(MainActivity.this);
-        labelCarbs.setText("" + food.getCarbs());
+        labelCarbs.setText("" + food.carbs);
         labelCarbs.setTextColor(Color.BLACK);
         labelCarbs.setLayoutParams(new TableRow.LayoutParams(
                 TableRow.LayoutParams.MATCH_PARENT,
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 TableLayout.LayoutParams.MATCH_PARENT,
                 TableLayout.LayoutParams.WRAP_CONTENT));
 
-        MainActivity.this.addToTotals(food.getCalories(), food.getCarbs());
+        MainActivity.this.addToTotals(food.calories, food.carbs);
         MainActivity.this.updateRemaining();
 //        MainActivity.this.subtractFromRemaining(food.getCalories(), food.getCarbs());
     }
@@ -159,15 +161,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 FoodEntry food = new FoodEntry();
 
                 //Food dialog variables
-                food.setName(editText_Food.getText().toString());
-                food.setCalories("".equals(calorieCount.getText().toString()) ? 0 : Integer.parseInt(calorieCount.getText().toString()));
-                food.setCarbs("".equals(carbCount.getText().toString()) ? 0 : Integer.parseInt(carbCount.getText().toString()));
-                food.setEntryDate(new Date());
+                food.name = editText_Food.getText().toString();
+                food.calories = "".equals(calorieCount.getText().toString()) ? 0 : Integer.parseInt(calorieCount.getText().toString());
+                food.carbs = "".equals(carbCount.getText().toString()) ? 0 : Integer.parseInt(carbCount.getText().toString());
+                food.entryDate = new Date();
 
                 // Persist food data
-                realm.beginTransaction();
-                realm.copyToRealm(food);
-                realm.commitTransaction();
+                foodDatabase.foodDao().insertFood( food );
 
                 addFoodRow(food);
             }

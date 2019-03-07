@@ -14,7 +14,7 @@ import androidx.room.TypeConverters;
 public class FoodEntry {
 
     //DB columns
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int id;
     public int carbs;
     public int calories;
